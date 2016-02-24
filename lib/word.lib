@@ -1,0 +1,43 @@
+<?php
+
+function getWord (){
+$file= file_get_contents("db/cens.db");
+$cens = unserialize($file);   // массив слов
+return $cens;
+}
+
+function addWord ($cens){
+if (isset($_POST['add'])){	
+foreach ( $cens as  $word){
+if ( $word == $_POST['addWord']){
+ $g= 1; break;} 
+}
+if ($g==1){echo '<p class="wor"> слово "'.$_POST['addWord'].'" уже есть  в списке</p>';}
+else {$cens[] = $_POST['addWord']; echo '<p class="suc"> слово "'.$_POST['addWord'].'" было добавлено в список</p>';}
+}
+$censDB = serialize($cens);
+file_put_contents("db/cens.db",$censDB );
+return $cens;
+}
+
+function delWord ($cens){
+if (isset($_POST['delete'])){
+foreach ( $cens as $key => $word){
+if ( $word == $_POST['delWord']) 
+{ $d= 1; break;}
+}
+if ($d !=1 ) { echo '<p class="wor"> слово "'.$_POST['delWord'].'" отсутствует в  списке</p>';}
+else {echo '<p class="suc"> слово "'.$_POST['delWord'].'" было удалено  из списка</p>';
+unset($cens[$key]);}
+}
+$censDB = serialize($cens);
+file_put_contents("db/cens.db",$censDB );
+return $cens;
+}
+
+function show ($cens){
+foreach ($cens as $word){
+echo $word. ", ";
+}
+}
+?>

@@ -1,0 +1,51 @@
+﻿<?php
+function getContent(){
+	if(is_readable("db/messages.db")){
+	$f= file_get_contents("db/messages.db");
+	$messages = unserialize($f);
+    return $messages;	
+}
+}
+function addContent ($messages){	
+if (isset($_POST['submit'])){
+	$newPost["userName"] =htmlspecialchars($_POST['userName']);
+	$newPost["userMessage"] =htmlspecialchars($_POST['userMessage']);
+	$messages[]= $newPost;
+	$messagesDB = serialize($messages);
+	file_put_contents("db/messages.db",$messagesDB );
+	return $messages;	
+}
+return $messages;		
+}
+function censy ($messages){
+$fileCens= file_get_contents("db/cens.db");
+$cens = unserialize($fileCens);
+
+foreach ($messages as $post){
+		foreach($cens as $word){
+		$post['userName']=str_ireplace($word, "CENSORED",$post['userName']);
+		$post['userMessage']=str_ireplace($word, "CENSORED",$post['userMessage']);
+		$censPost = ['userName' => $post['userName'],'userMessage' => $post['userMessage']];
+		}
+		$censMessages[] = $censPost;
+    }	
+	  $messages = $censMessages;
+      return $messages;
+
+}
+
+function showContent($messages){
+	if ($messages){
+	$g =0;
+	$messages=array_reverse($messages);
+	foreach ($messages as $post){
+	$g++;
+	if ( $g % 2 == 0 ){$float="left"; }else {$float="right";}
+	echo '<div class="'.$float.'_messeges">'. $post['userName'];
+	echo '<span class="text_masseges_'.$float.'">'. $post['userMessage'] . '</span> </div>';	
+	}
+}
+}
+
+
+?>
